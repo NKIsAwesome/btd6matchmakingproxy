@@ -7,6 +7,7 @@ const app2 = express();
 const PORT = 8085;
 const PORT2 = 8086;
 
+const relayProxy = '192.168.1.208'
 
 
 app.use(bodyParser.json());
@@ -14,20 +15,20 @@ app2.use(bodyParser.json());
 
 app.use((req,res,next)=>{
 	//console.log(req);
-	handleRequest(req,res,'https://api.ninjakiwi.com/matchmaking/join');
+	handleRequest(req,res,'https://api.ninjakiwi.com/matchmaking/anon/join');
 	console.log('join');
 	//next();
 })
 
 app2.use((req,res,next)=>{
 	//console.log(req);
-	handleRequest(req,res,'https://api.ninjakiwi.com/matchmaking/create');
+	handleRequest(req,res,'https://api.ninjakiwi.com/matchmaking/anon/create',true);
 	console.log('create');
 	//next();
 })
 
-const handleRequest = async (req,res,url)=>{
-	console.log(req.body);
+const handleRequest = async (req,res,url,create)=>{
+	//console.log(req.body);
 	/*const response = await axios.post(url,req.body,{
 		headers:req.headers,
 	}).catch(e=>console.error(e));*/
@@ -42,15 +43,23 @@ const handleRequest = async (req,res,url)=>{
 	}).catch(e=>console.error(e));
 	//if(response && response.data){
 		//let newData = JSON.parse(response.data);
-		let modded = JSON.parse(response);
-		console.log(modded.data.metadata);
-		//modded.data.metadata.Map = 'MoonLanding';
-		response = JSON.stringify(modded);
+		if(create){
+			let modded = JSON.parse(response);
+			let moddedData = JSON.parse(modded.data);
+			moddedData.metadata.Map = 'MoonLanding';
+			moddedData.metadata.Mode = 'Sandbox';
+			//moddedData.metadata.relay_server_ip = relayProxy;
+			//moddedData.metadata.relay.ip = relayProxy
+			modded.data = JSON.stringify(moddedData);
+			response = JSON.stringify(modded);
+		}
 		//response.data = JSON.stringify(newData);
 		//console.log('updated response');
 		//console.log(response.data);	
 	//}
 	//console.log(response);
+	console.log('connected');
+	console.log(response);
 	res.send(response);
 }
 
