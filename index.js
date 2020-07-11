@@ -32,7 +32,7 @@ const handleRequest = async (req,res,url)=>{
 		headers:req.headers,
 	}).catch(e=>console.error(e));*/
 	req.headers.host = 'api.ninjakiwi.com';
-	const response = await request({
+	let response = await request({
 		//servername :'api.ninjakiwi.com',
 		//hostname :'api.ninjakiwi.com',
 		uri:url,
@@ -40,7 +40,17 @@ const handleRequest = async (req,res,url)=>{
 		body:JSON.stringify(req.body),
 		headers:req.headers
 	}).catch(e=>console.error(e));
-	console.log(response);
+	//if(response && response.data){
+		//let newData = JSON.parse(response.data);
+		let modded = JSON.parse(response);
+		console.log(modded.data.metadata);
+		//modded.data.metadata.Map = 'MoonLanding';
+		response = JSON.stringify(modded);
+		//response.data = JSON.stringify(newData);
+		//console.log('updated response');
+		//console.log(response.data);	
+	//}
+	//console.log(response);
 	res.send(response);
 }
 
