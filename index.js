@@ -46,10 +46,13 @@ const handleRequest = async (req,res,url,create)=>{
 		if(create){
 			let modded = JSON.parse(response);
 			let moddedData = JSON.parse(modded.data);
-			moddedData.metadata.Map = 'MoonLanding';
-			moddedData.metadata.Mode = 'Sandbox';
-			//moddedData.metadata.relay_server_ip = relayProxy;
-			//moddedData.metadata.relay.ip = relayProxy
+			//moddedData.metadata.Map = 'MoonLanding';
+			//moddedData.metadata.Mode = 'Sandbox';
+			const oldIp = moddedData.metadata.relay.ip;
+			const oldPort = moddedData.metadata.relay.port;
+			await request(`http://localhost:8090/?address=${oldIp}&port=${oldPort}`).catch(e=>console.error(e));
+			moddedData.metadata.relay_server_ip = relayProxy;
+			moddedData.metadata.relay.ip = relayProxy
 			modded.data = JSON.stringify(moddedData);
 			response = JSON.stringify(modded);
 		}
@@ -60,6 +63,7 @@ const handleRequest = async (req,res,url,create)=>{
 	//console.log(response);
 	console.log('connected');
 	console.log(response);
+
 	res.send(response);
 }
 
@@ -69,5 +73,5 @@ app.listen(PORT,()=>{
 })
 
 app2.listen(PORT2,()=>{
-	console.log(`Listening on port ${PORT}.`);
+	console.log(`Listening on port ${PORT2}.`);
 })
