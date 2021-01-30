@@ -7,7 +7,7 @@ const app2 = express();
 const PORT = 8085;
 const PORT2 = 8086;
 
-const relayProxy = '192.168.1.208'
+const relayProxy = '192.168.230.132'
 
 
 app.use(bodyParser.json());
@@ -41,6 +41,7 @@ const handleRequest = async (req,res,url,create)=>{
 		body:JSON.stringify(req.body),
 		headers:req.headers
 	}).catch(e=>console.error(e));
+	console.log(response);
 	//if(response && response.data){
 		//let newData = JSON.parse(response.data);
 		if(create){
@@ -50,7 +51,7 @@ const handleRequest = async (req,res,url,create)=>{
 			//moddedData.metadata.Mode = 'Sandbox';
 			const oldIp = moddedData.metadata.relay.ip;
 			const oldPort = moddedData.metadata.relay.port;
-			await request(`http://localhost:8090/?address=${oldIp}&port=${oldPort}`).catch(e=>console.error(e));
+			await request(`http://localhost:8090/createServer?address=${oldIp}&port=${oldPort}`).catch(e=>console.error(e));
 			moddedData.metadata.relay_server_ip = relayProxy;
 			moddedData.metadata.relay.ip = relayProxy
 			modded.data = JSON.stringify(moddedData);
